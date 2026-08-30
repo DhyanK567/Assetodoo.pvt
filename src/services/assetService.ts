@@ -264,6 +264,15 @@ class AssetService {
     return this.setStorageItem('MOCK_DB_ASSETS', list);
   }
 
+  public updateAssetStatus(assetId: string, status: AssetStatus): void {
+    const assets = this.getAssets();
+    const idx = assets.findIndex(a => a.id === assetId);
+    if (idx > -1) {
+      assets[idx].status = status;
+      this.saveAsset(assets[idx]);
+    }
+  }
+
   public deleteAsset(id: string): Asset[] {
     const list = this.getAssets().filter(a => a.id !== id);
     return this.setStorageItem('MOCK_DB_ASSETS', list);
