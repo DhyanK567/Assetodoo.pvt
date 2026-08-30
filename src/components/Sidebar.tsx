@@ -16,7 +16,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { path: '/', label: 'Dashboard', icon: '🏠', allowedRoles: ['admin', 'asset_manager', 'dept_head', 'employee'] },
   { path: '/assets', label: 'Asset Registry', icon: '📦', allowedRoles: ['admin', 'asset_manager', 'dept_head'] },
-  { path: '/categories', label: 'Asset Categories', icon: '🏷️', allowedRoles: ['admin', 'asset_manager'] },
+  { path: '/booking', label: 'Resource Booking', icon: '📅', allowedRoles: ['admin', 'asset_manager', 'dept_head', 'employee'] },
   { path: '/requests', label: 'Asset Requests', icon: '📥', allowedRoles: ['admin', 'asset_manager', 'dept_head', 'employee'] },
   { path: '/allocations', label: 'Allocations Map', icon: '🔗', allowedRoles: ['admin', 'asset_manager', 'dept_head'] },
   { path: '/maintenance', label: 'Maintenance Log', icon: '🛠️', allowedRoles: ['admin', 'asset_manager', 'employee'] },

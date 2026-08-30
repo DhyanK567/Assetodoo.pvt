@@ -14,7 +14,7 @@ import { ForgotPassword } from '../pages/ForgotPassword';
 // Dashboard Pages
 import { Dashboard } from '../pages/Dashboard';
 import { AssetRegistry } from '../pages/AssetRegistry';
-import { Categories } from '../pages/Categories';
+import { ResourceBookingPage } from '../pages/ResourceBooking';
 import { AssetRequests } from '../pages/AssetRequests';
 import { Allocations } from '../pages/Allocations';
 import { Maintenance } from '../pages/Maintenance';
@@ -65,12 +65,12 @@ export const AppShell: React.FC = () => {
                   } 
                 />
 
-                {/* 3. Asset Categories */}
+                {/* 3. Resource Booking */}
                 <Route 
-                  path="categories" 
+                  path="booking" 
                   element={
-                    <ProtectedRoute allowedRoles={['admin', 'asset_manager']}>
-                      <Categories />
+                    <ProtectedRoute allowedRoles={['admin', 'asset_manager', 'dept_head', 'employee']}>
+                      <ResourceBookingPage />
                     </ProtectedRoute>
                   } 
                 />
