@@ -22,7 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/maintenance', label: 'Maintenance Log', icon: '🛠️', allowedRoles: ['admin', 'asset_manager', 'employee'] },
   { path: '/audits', label: 'Audit Stocktakes', icon: '📋', allowedRoles: ['admin', 'asset_manager'] },
   { path: '/disposal', label: 'Decommissioning', icon: '♻️', allowedRoles: ['admin', 'asset_manager'] },
-  { path: '/users', label: 'User Management', icon: '👥', allowedRoles: ['admin'] },
+  { path: '/organization', label: 'Organization Setup', icon: '🏢', allowedRoles: ['admin'] },
   { path: '/reports', label: 'Reports & Costs', icon: '📊', allowedRoles: ['admin', 'asset_manager', 'dept_head'] },
   { path: '/broken-route-test', label: 'Trigger Error', icon: '⚠️', allowedRoles: ['admin', 'asset_manager', 'dept_head', 'employee'] },
 ];

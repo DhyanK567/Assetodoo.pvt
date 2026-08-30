@@ -20,7 +20,7 @@ import { Allocations } from '../pages/Allocations';
 import { Maintenance } from '../pages/Maintenance';
 import { Audits } from '../pages/Audits';
 import { Disposal } from '../pages/Disposal';
-import { UserManagement } from '../pages/UserManagement';
+import { OrgSetupPage } from '../pages/OrgSetup/OrgSetupPage';
 import { Reports } from '../pages/Reports';
 import { BrokenRouteTest } from '../pages/BrokenRouteTest';
 import { Unauthorized } from '../pages/Unauthorized';
@@ -125,12 +125,12 @@ export const AppShell: React.FC = () => {
                   } 
                 />
 
-                {/* 9. User Management (Admin only) */}
+                {/* 9. Organization Setup (Admin only) */}
                 <Route 
-                  path="users" 
+                  path="organization" 
                   element={
                     <ProtectedRoute allowedRoles={['admin']}>
-                      <UserManagement />
+                      <OrgSetupPage />
                     </ProtectedRoute>
                   } 
                 />
