@@ -91,6 +91,33 @@ class ApiService {
       };
     }
 
+    if (endpoint.startsWith('/dashboard/kpis')) {
+      return {
+        data: {
+          available: 482,
+          allocated: 712,
+          maintenanceToday: 5,
+          activeBookings: 18,
+          pendingTransfers: 8,
+          upcomingReturns: 14
+        } as unknown as T,
+        status: 200,
+        message: 'Dashboard KPIs retrieved successfully.',
+      };
+    }
+
+    if (endpoint.startsWith('/dashboard/overdue')) {
+      return {
+        data: [
+          { id: '1', code: 'AST-LTP-092', name: 'Dell Latitude 7420 Laptop', custodian: 'Taylor Worker', daysOverdue: 12, category: 'IT Hardware' },
+          { id: '2', code: 'AST-MBL-148', name: 'iPad Pro 12.9"', custodian: 'Sam Manager', daysOverdue: 4, category: 'Mobile Devices' },
+          { id: '3', code: 'AST-OSC-011', name: 'Tektronix MSO Oscilloscope', custodian: 'Jordan Director', daysOverdue: 9, category: 'Lab Equipment' },
+        ] as unknown as T,
+        status: 200,
+        message: 'Overdue list retrieved successfully.',
+      };
+    }
+
     throw new Error(`[ApiService Mock Error] Endpoint "${endpoint}" is not mocked.`);
   }
 
@@ -101,6 +128,28 @@ class ApiService {
 
   public async getSystemStatus(): Promise<ApiResponse<{ status: string; api: string; version: string }>> {
     return this.request<{ status: string; api: string; version: string }>('/status');
+  }
+
+  public async getDashboardKpis(): Promise<ApiResponse<{
+    available: number;
+    allocated: number;
+    maintenanceToday: number;
+    activeBookings: number;
+    pendingTransfers: number;
+    upcomingReturns: number;
+  }>> {
+    return this.request('/dashboard/kpis');
+  }
+
+  public async getDashboardOverdue(): Promise<ApiResponse<Array<{
+    id: string;
+    code: string;
+    name: string;
+    custodian: string;
+    daysOverdue: number;
+    category: string;
+  }>>> {
+    return this.request('/dashboard/overdue');
   }
 }
 
