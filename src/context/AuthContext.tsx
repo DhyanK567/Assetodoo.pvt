@@ -15,13 +15,13 @@ interface AuthContextType {
   currentRole: UserRole;
   isAuthenticated: boolean;
   changeRole: (role: UserRole) => void;
-  login: (email: string, role: UserRole) => void;
+  loginUser: (user: User) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Default mock profiles for each role
+// Default mock profiles for dev role-switching convenience
 const MOCK_PROFILES: Record<UserRole, Omit<User, 'role'>> = {
   admin: { id: 'usr_admin', name: 'Alex Administrator', email: 'alex.admin@odoo.pvt' },
   asset_manager: { id: 'usr_manager', name: 'Sam Manager', email: 'sam.manager@odoo.pvt' },
@@ -31,45 +31,46 @@ const MOCK_PROFILES: Record<UserRole, Omit<User, 'role'>> = {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
-    // Check local storage for persistent mock role selection, default to admin
-    const storedRole = (localStorage.getItem('MOCK_AUTH_ROLE') as UserRole) || 'admin';
-    const profile = MOCK_PROFILES[storedRole];
-    return {
-      ...profile,
-      role: storedRole,
-    };
+    // Session is default-logged out unless mock session exists
+    const session = localStorage.getItem('MOCK_USER_SESSION');
+    try {
+      return session ? JSON.parse(session) : null;
+    } catch {
+      return null;
+    }
   });
 
   const changeRole = (role: UserRole) => {
-    localStorage.setItem('MOCK_AUTH_ROLE', role);
+    if (!currentUser) return;
+    
     const profile = MOCK_PROFILES[role];
-    setCurrentUser({
+    const updatedUser: User = {
+      ...currentUser,
       ...profile,
       role,
-    });
-    console.log(`[AuthContext] Mock role changed dynamically to: ${role.toUpperCase()}`);
+    };
+    setCurrentUser(updatedUser);
+    localStorage.setItem('MOCK_USER_SESSION', JSON.stringify(updatedUser));
+    console.log(`[AuthContext] Developer swapped role dynamically to: ${role.toUpperCase()}`);
   };
 
-  const login = (email: string, role: UserRole) => {
-    const customUser: User = {
-      id: `usr_${Math.random().toString(36).substr(2, 9)}`,
-      name: email.split('@')[0].toUpperCase(),
-      email,
-      role,
-    };
-    localStorage.setItem('MOCK_AUTH_ROLE', role);
-    setCurrentUser(customUser);
+  const loginUser = (user: User) => {
+    setCurrentUser(user);
+    localStorage.setItem('MOCK_USER_SESSION', JSON.stringify(user));
+    console.log(`[AuthContext] User logged in: ${user.email} as ${user.role.toUpperCase()}`);
   };
 
   const logout = () => {
     setCurrentUser(null);
+    localStorage.removeItem('MOCK_USER_SESSION');
+    console.log('[AuthContext] User logged out, cleared session.');
   };
 
   const currentRole = currentUser?.role || 'employee';
   const isAuthenticated = currentUser !== null;
 
   return (
-    <AuthContext.Provider value={{ currentUser, currentRole, isAuthenticated, changeRole, login, logout }}>
+    <AuthContext.Provider value={{ currentUser, currentRole, isAuthenticated, changeRole, loginUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

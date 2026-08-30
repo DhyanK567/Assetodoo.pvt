@@ -6,7 +6,12 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { BaseLayout } from './BaseLayout';
 import { LoadingSpinner } from './LoadingSpinner';
 
-// Pages
+// Authentication Pages
+import { Login } from '../pages/Login';
+import { Signup } from '../pages/Signup';
+import { ForgotPassword } from '../pages/ForgotPassword';
+
+// Dashboard Pages
 import { Dashboard } from '../pages/Dashboard';
 import { AssetRegistry } from '../pages/AssetRegistry';
 import { Categories } from '../pages/Categories';
@@ -32,6 +37,11 @@ export const AppShell: React.FC = () => {
         <Suspense fallback={<LoadingSpinner message="Loading application viewport..." fullScreen />}>
           <BrowserRouter>
             <Routes>
+              {/* Standalone Authentication Pages (No header/sidebar) */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+
               {/* Core Layout containing Sidebar & Topbar */}
               <Route path="/" element={<BaseLayout />}>
                 

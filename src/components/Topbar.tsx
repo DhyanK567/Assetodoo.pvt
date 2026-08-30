@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth, type UserRole } from '../context/AuthContext';
 import { api } from '../services/api';
 
@@ -11,7 +12,8 @@ export const Topbar: React.FC<TopbarProps> = ({
   onToggleSidebar, 
   isSidebarCollapsed 
 }) => {
-  const { currentUser, currentRole, changeRole } = useAuth();
+  const { currentUser, currentRole, changeRole, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [isMockApi, setIsMockApi] = useState(api.isMockEnabled());
 
   const handleToggleApiMode = () => {
@@ -24,6 +26,11 @@ export const Topbar: React.FC<TopbarProps> = ({
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const targetRole = e.target.value as UserRole;
     changeRole(targetRole);
+  };
+
+  const handleLogoutClick = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -44,21 +51,23 @@ export const Topbar: React.FC<TopbarProps> = ({
       </div>
 
       <div className="header-right" style={styles.rightArea}>
-        {/* Mock Role Switcher Dropdown (Dev Mode) */}
-        <div style={styles.devControls} className="glass-panel">
-          <label htmlFor="role-select" style={styles.devLabel}>🧪 Mock Role:</label>
-          <select 
-            id="role-select" 
-            value={currentRole} 
-            onChange={handleRoleChange}
-            style={styles.devSelect}
-          >
-            <option value="admin">Administrator</option>
-            <option value="asset_manager">Asset Manager</option>
-            <option value="dept_head">Dept Head</option>
-            <option value="employee">Employee</option>
-          </select>
-        </div>
+        {/* Mock Role Switcher Dropdown (Dev Mode) - Only show if authenticated */}
+        {isAuthenticated && (
+          <div style={styles.devControls} className="glass-panel">
+            <label htmlFor="role-select" style={styles.devLabel}>🧪 Mock Role:</label>
+            <select 
+              id="role-select" 
+              value={currentRole} 
+              onChange={handleRoleChange}
+              style={styles.devSelect}
+            >
+              <option value="admin">Administrator</option>
+              <option value="asset_manager">Asset Manager</option>
+              <option value="dept_head">Dept Head</option>
+              <option value="employee">Employee</option>
+            </select>
+          </div>
+        )}
 
         {/* Mock/Real API Badge */}
         <div 
@@ -71,13 +80,22 @@ export const Topbar: React.FC<TopbarProps> = ({
           <span>API: {isMockApi ? 'MOCK' : 'REAL'}</span>
         </div>
 
-        {/* User Profile Info */}
-        <div style={styles.userInfo}>
-          <div style={styles.avatar}>
-            {currentUser?.name.charAt(0) || 'U'}
+        {/* User Profile Info & Logout Trigger */}
+        {isAuthenticated && (
+          <div style={styles.userInfo}>
+            <div style={styles.avatar}>
+              {currentUser?.name.charAt(0) || 'U'}
+            </div>
+            <span style={styles.userName}>{currentUser?.name.split(' ')[0]}</span>
+            <button 
+              onClick={handleLogoutClick}
+              style={styles.logoutBtn}
+              title="Logout session"
+            >
+              🚪
+            </button>
           </div>
-          <span style={styles.userName}>{currentUser?.name.split(' ')[0]}</span>
-        </div>
+        )}
       </div>
     </header>
   );
@@ -150,6 +168,15 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 500,
     color: 'var(--text-secondary)',
     display: 'none', // Mobile responsive override
+  },
+  logoutBtn: {
+    background: 'transparent',
+    border: 'none',
+    fontSize: '16px',
+    cursor: 'pointer',
+    padding: '4px',
+    borderRadius: 'var(--radius-sm)',
+    transition: 'background var(--transition-fast)',
   },
 };
 
