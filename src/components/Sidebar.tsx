@@ -18,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/assets', label: 'Asset Registry', icon: '📦', allowedRoles: ['admin', 'asset_manager', 'dept_head'] },
   { path: '/categories', label: 'Asset Categories', icon: '🏷️', allowedRoles: ['admin', 'asset_manager'] },
   { path: '/requests', label: 'Asset Requests', icon: '📥', allowedRoles: ['admin', 'asset_manager', 'dept_head', 'employee'] },
-  { path: '/allocations', label: 'Allocations Map', icon: '🔗', allowedRoles: ['admin', 'asset_manager'] },
+  { path: '/allocations', label: 'Allocations Map', icon: '🔗', allowedRoles: ['admin', 'asset_manager', 'dept_head'] },
   { path: '/maintenance', label: 'Maintenance Log', icon: '🛠️', allowedRoles: ['admin', 'asset_manager', 'employee'] },
   { path: '/audits', label: 'Audit Stocktakes', icon: '📋', allowedRoles: ['admin', 'asset_manager'] },
   { path: '/disposal', label: 'Decommissioning', icon: '♻️', allowedRoles: ['admin', 'asset_manager'] },

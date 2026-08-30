@@ -89,7 +89,7 @@ export const AppShell: React.FC = () => {
                 <Route 
                   path="allocations" 
                   element={
-                    <ProtectedRoute allowedRoles={['admin', 'asset_manager']}>
+                    <ProtectedRoute allowedRoles={['admin', 'asset_manager', 'dept_head']}>
                       <Allocations />
                     </ProtectedRoute>
                   } 
