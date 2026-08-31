@@ -1,0 +1,78 @@
+====================================================================
+REQUIRED BACK-END API ENDPOINTS
+====================================================================
+The front-end is designed to consume the following REST API endpoints. The back-end must implement these routes, secure them with JWT authentication, and return data in the standard format: { "data": { ... }, "status": 200, "message": "Success" }
+
+--------------------------------------------------------------------
+1. AUTHENTICATION & USERS
+--------------------------------------------------------------------
+POST   /auth/login             - Authenticate user, return JWT and User object
+POST   /auth/signup            - Register a new user
+POST   /auth/forgot-password   - Trigger password reset email flow
+GET    /user/me                - Get the currently authenticated user's profile
+GET    /users                  - List all users (used for employee directories)
+
+--------------------------------------------------------------------
+2. DASHBOARD KPIs
+--------------------------------------------------------------------
+GET    /dashboard/kpis         - Return high-level stats: { available: int, allocated: int, maintenanceToday: int, activeBookings: int }
+
+--------------------------------------------------------------------
+3. ASSET REGISTRY
+--------------------------------------------------------------------
+GET    /assets                 - List all assets in the registry
+POST   /assets                 - Create a new asset
+GET    /assets/:id             - Get details for a specific asset
+PUT    /assets/:id             - Update an asset
+DELETE /assets/:id             - Delete an asset
+
+--------------------------------------------------------------------
+4. ALLOCATIONS & TRANSFERS
+--------------------------------------------------------------------
+GET    /allocations            - List all active asset allocations
+POST   /allocations            - Assign an asset to a user
+POST   /allocations/return     - Process the return of an allocated asset
+POST   /allocations/transfer   - Request an asset transfer to another user
+PUT    /allocations/transfer/:id/approve - Approve a transfer request
+
+--------------------------------------------------------------------
+5. RESOURCE BOOKINGS
+--------------------------------------------------------------------
+GET    /bookings               - List all resource bookings (with date/asset filters)
+POST   /bookings               - Create a new resource booking (backend MUST validate time overlaps)
+PUT    /bookings/:id           - Reschedule or update a booking
+DELETE /bookings/:id           - Cancel a booking
+
+--------------------------------------------------------------------
+6. MAINTENANCE TICKETS
+--------------------------------------------------------------------
+GET    /maintenance            - List all maintenance requests
+POST   /maintenance            - Raise a new maintenance request
+PUT    /maintenance/:id/status - Update ticket status (e.g., 'Approved', 'Resolved')
+
+--------------------------------------------------------------------
+7. AUDITS & STOCKTAKES
+--------------------------------------------------------------------
+GET    /audits                 - List all audit cycles
+POST   /audits                 - Create a new audit cycle
+PUT    /audits/:id/verify      - Submit verification data for a specific asset in an audit
+POST   /audits/:id/close       - Close the audit cycle (backend must lock data immutability)
+
+--------------------------------------------------------------------
+8. ORGANIZATION SETUP
+--------------------------------------------------------------------
+GET    /org/departments        - List all departments
+GET    /org/categories         - List all asset categories
+PUT    /org/settings           - Update organization-wide settings
+
+--------------------------------------------------------------------
+9. ACTIVITY LOGS & NOTIFICATIONS
+--------------------------------------------------------------------
+GET    /notifications          - Get active notifications for the current user's role
+PUT    /notifications/read-all - Mark all notifications as read
+GET    /logs                   - Get activity logs (backend MUST filter results based on user's role)
+
+====================================================================
+FILE UPLOADS
+====================================================================
+POST   /upload                 - Accept multipart/form-data (e.g., maintenance photos), upload to storage, and return the public URL string.
