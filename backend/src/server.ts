@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 // @ts-ignore - Temporary bypass until prisma generate is run manually
 import { PrismaClient } from '@prisma/client';
 
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+
 // Load environment variables
 dotenv.config();
 
@@ -15,6 +18,11 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/user', userRoutes); // Handles /user/me
+app.use('/api/v1/users', userRoutes); // Handles /users
 
 // Health Check Endpoint
 app.get('/api/v1/status', async (req, res) => {
