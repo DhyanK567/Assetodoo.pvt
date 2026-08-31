@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  ASSET_MANAGER
+  DEPT_HEAD
+  EMPLOYEE
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      Role     @default(EMPLOYEE)
+  password  String
+  createdAt DateTime @default(now())
+
+  // Relations
+  allocations    Allocation[]
+  bookings       ResourceBooking[]
+  maintenanceReq MaintenanceRequest[]
+}
+
+model Department {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  managerId String?
+  budget    Float    @default(0.0)
+  userCount Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model AssetCategory {
+  id                 String   @id @default(uuid())
+  name               String   @unique
+  description        String?
+  attributeTemplates Json?
+  createdAt          DateTime @default(now())
+
+  assets Asset[]
+}
+
+model Asset {
+  id               String   @id @default(uuid())
+  name             String
+  categoryId       String
+  category         AssetCategory @relation(fields: [categoryId], references: [id])
+  status           String   // 'Available'|'In Use'|'Maintenance'|'Disposed'
+  condition        String   // 'New'|'Good'|'Fair'|'Poor'
+  serialNumber     String?
+  purchaseCost     Float    @default(0.0)
+  acquisitionDate  DateTime @default(now())
+  customAttributes Json?
+  createdAt        DateTime @default(now())
+
+  // Relations
+  allocations        Allocation[]
+  bookings           ResourceBooking[]
+  maintenanceTickets MaintenanceRequest[]
+  auditVerifications AuditVerification[]
+}
+
+model Allocation {
+  id           String   @id @default(uuid())
+  assetId      String
+  asset        Asset    @relation(fields: [assetId], references: [id])
+  assignedToId String
+  assignedTo   User     @relation(fields: [assignedToId], references: [id])
+  assignedById String
+  dateAssigned DateTime @default(now())
+  status       String   // 'Active' | 'Pending Return' | 'Transferred'
+}
+
+model ResourceBooking {
+  id         String   @id @default(uuid())
+  resourceId String
+  resource   Asset    @relation(fields: [resourceId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  startTime  DateTime
+  endTime    DateTime
+  status     String   // 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
+  createdAt  DateTime @default(now())
+}
+
+model MaintenanceRequest {
+  id               String   @id @default(uuid())
+  assetId          String
+  asset            Asset    @relation(fields: [assetId], references: [id])
+  reportedById     String
+  reportedBy       User     @relation(fields: [reportedById], references: [id])
+  issueDescription String
+  priority         String   // 'High' | 'Medium' | 'Low'
+  status           String   // 'Pending'|'Approved'|'In Progress'|'Resolved'|'Rejected'
+  photoUrl         String?
+  dateReported     DateTime @default(now())
+  createdAt        DateTime @default(now())
+}
+
+model AuditCycle {
+  id        String   @id @default(uuid())
+  name      String
+  scope     String
+  startDate DateTime
+  endDate   DateTime
+  status    String   // 'Active' | 'Closed'
+  createdAt DateTime @default(now())
+
+  verifications AuditVerification[]
+}
+
+model AuditVerification {
+  id         String     @id @default(uuid())
+  auditId    String
+  audit      AuditCycle @relation(fields: [auditId], references: [id])
+  assetId    String
+  asset      Asset      @relation(fields: [assetId], references: [id])
+  auditorId  String
+  status     String     // 'Verified'|'Missing'|'Damaged'
+  notes      String?
+  createdAt  DateTime   @default(now())
+}
+
+model ActivityLog {
+  id           String   @id @default(uuid())
+  actionDomain String
+  actorId      String
+  details      String
+  targetRoles  String[] // Array of Roles (as strings)
+  timestamp    DateTime @default(now())
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  type        String
+  message     String
+  isRead      Boolean  @default(false)
+  targetRoles String[] // Array of Roles
+  timestamp   DateTime @default(now())
+}
