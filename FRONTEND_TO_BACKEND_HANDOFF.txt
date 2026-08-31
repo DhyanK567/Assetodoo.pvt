@@ -1,0 +1,89 @@
+====================================================================
+FRONT-END TO BACK-END HANDOFF DOCUMENT (PHASE 1 - 14)
+====================================================================
+
+====================================================================
+PART 1: DATA MODELS TAKEN FOR FRONT-END UPDATES (MOCK DB SCHEMAS)
+====================================================================
+The front-end currently relies on LocalStorage to simulate the backend. The backend must implement relational databases mapping to these JSON shapes:
+
+1. USER & ORGANIZATION ENTITIES:
+- Users (id, name, email, role ['admin' | 'asset_manager' | 'dept_head' | 'employee'])
+- Departments (id, name, managerId, budget, userCount)
+- AssetCategories (id, name, description, attributeTemplates)
+
+2. ASSET REGISTRY & LIFECYCLE:
+- Assets:
+  { 
+    id, name, category, status ('Available'|'In Use'|'Maintenance'|'Disposed'), 
+    condition ('New'|'Good'|'Fair'|'Poor'), serialNumber, purchaseCost, 
+    acquisitionDate, customAttributes (JSON dynamic schema)
+  }
+- Allocations / Transfers:
+  { 
+    id, assetId, assignedTo (UserId), assignedBy (AdminId), 
+    dateAssigned, status ('Active' | 'Pending Return' | 'Transferred')
+  }
+
+3. RESOURCE BOOKINGS:
+- Bookings:
+  {
+    id, resourceId (AssetId), userId, startTime (ISO), endTime (ISO), 
+    status ('upcoming' | 'ongoing' | 'completed' | 'cancelled')
+  }
+
+4. MAINTENANCE TICKETS:
+- MaintenanceRequests:
+  {
+    id, assetId, reportedBy (UserId), issueDescription, priority, 
+    status ('Pending'|'Approved'|'In Progress'|'Resolved'|'Rejected'), 
+    photoUrl, dateReported
+  }
+
+5. AUDIT & STOCKTAKES:
+- AuditCycles:
+  {
+    id, name, scope (Department/Location), startDate, endDate, 
+    status ('Active' | 'Closed')
+  }
+- AuditVerifications (per asset): 
+  { auditId, assetId, auditorId, status ('Verified'|'Missing'|'Damaged'), notes }
+
+6. ACTIVITY LOGS & NOTIFICATIONS:
+- ActivityLog: { id, actionDomain, actorId, details, timestamp, targetRoles }
+- Notifications: { id, type, message, isRead, timestamp, targetRoles }
+
+
+====================================================================
+PART 2: HOW AND WHERE TO CONNECT FRONT-END TO THE NEW BACK-END
+====================================================================
+
+When the backend API is ready, you do NOT need to rewrite the frontend components. You only need to update the configuration in TWO places.
+
+== PLACE 1: The Environment Variables (.env) ==
+1. Rename the existing `.env.example` file to `.env.local`
+2. Update the `VITE_API_URL` to point to your new backend server URL.
+3. Change `VITE_USE_MOCK_API` to `false` to shut down the local mock engine.
+
+Example:
+VITE_API_URL=http://localhost:8080/api/v1/
+VITE_USE_MOCK_API=false
+VITE_AUTH_DOMAIN=your-auth-domain.com
+
+
+== PLACE 2: The Core API Service Boundary (src/services/api.ts) ==
+All network traffic in the React app funnels entirely through ONE file: `src/services/api.ts`.
+
+1. Open `src/services/api.ts`.
+2. Look at the `public async request<T>(...args)` method.
+3. When `VITE_USE_MOCK_API` is set to `false`, this method automatically uses the native browser `fetch()` API to append your endpoint (e.g. `/assets`) to the `VITE_API_URL`.
+4. ALL backend responses MUST return JSON formatted exactly like this:
+   {
+     "data": { ... your data payload ... },
+     "status": 200,
+     "message": "Success"
+   }
+5. Modify `src/services/api.ts` to attach your JWT Bearer token into the `headers` block inside the `fetch()` call once your login route is generating real tokens.
+
+By following these steps, the entire frontend will seamlessly transition from the mock UI to a live production database.
+====================================================================
