@@ -24,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/disposal', label: 'Decommissioning', icon: '♻️', allowedRoles: ['admin', 'asset_manager'] },
   { path: '/organization', label: 'Organization Setup', icon: '🏢', allowedRoles: ['admin'] },
   { path: '/reports', label: 'Reports & Costs', icon: '📊', allowedRoles: ['admin', 'asset_manager', 'dept_head'] },
+  { path: '/logs', label: 'Activity Logs', icon: '📝', allowedRoles: ['admin', 'asset_manager', 'dept_head', 'employee'] },
   { path: '/broken-route-test', label: 'Trigger Error', icon: '⚠️', allowedRoles: ['admin', 'asset_manager', 'dept_head', 'employee'] },
 ];
 

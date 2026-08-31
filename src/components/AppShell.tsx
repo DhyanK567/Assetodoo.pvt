@@ -22,6 +22,7 @@ import { Audits } from '../pages/Audits';
 import { Disposal } from '../pages/Disposal';
 import { OrgSetupPage } from '../pages/OrgSetup/OrgSetupPage';
 import { Reports } from '../pages/Reports';
+import { ActivityLogPage } from '../pages/ActivityLogPage';
 import { BrokenRouteTest } from '../pages/BrokenRouteTest';
 import { Unauthorized } from '../pages/Unauthorized';
 import { NotFound } from '../pages/NotFound';
@@ -141,6 +142,16 @@ export const AppShell: React.FC = () => {
                   element={
                     <ProtectedRoute allowedRoles={['admin', 'asset_manager', 'dept_head']}>
                       <Reports />
+                    </ProtectedRoute>
+                  } 
+                />
+
+                {/* 11. Activity Logs */}
+                <Route 
+                  path="logs" 
+                  element={
+                    <ProtectedRoute allowedRoles={['admin', 'asset_manager', 'dept_head', 'employee']}>
+                      <ActivityLogPage />
                     </ProtectedRoute>
                   } 
                 />

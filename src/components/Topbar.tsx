@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, type UserRole } from '../context/AuthContext';
 import { api } from '../services/api';
+import { NotificationBell } from './NotificationBell';
 
 interface TopbarProps {
   onToggleSidebar: () => void;
@@ -79,6 +80,9 @@ export const Topbar: React.FC<TopbarProps> = ({
           <span className="badge-dot" />
           <span>API: {isMockApi ? 'MOCK' : 'REAL'}</span>
         </div>
+
+        {/* Notification Center */}
+        {isAuthenticated && <NotificationBell />}
 
         {/* User Profile Info & Logout Trigger */}
         {isAuthenticated && (
